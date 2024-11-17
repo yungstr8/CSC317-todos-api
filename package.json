@@ -1,0 +1,25 @@
+{
+  "name": "csc317-todos-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yungstr8/CSC317-todos-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yungstr8/CSC317-todos-api/issues"
+  },
+  "homepage": "https://github.com/yungstr8/CSC317-todos-api#readme",
+  "dependencies": {
+    "express": "^4.21.1",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {}
+}
