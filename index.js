@@ -24,6 +24,8 @@ const db = new sqlite3.Database('./todos.db', (err) => {
   console.log('Connected to the SQLite database.');
 });
 
+// Register routes with logging
+console.log('Registering route: GET /todos');
 // GET /todos - Retrieve all to-do items, with optional filtering by completion status
 app.get('/todos', (req, res) => {
   let query = 'SELECT * FROM todos';
@@ -43,6 +45,7 @@ app.get('/todos', (req, res) => {
   });
 });
 
+console.log('Registering route: POST /todos');
 // POST /todos - Add a new to-do item
 app.post('/todos', (req, res) => {
   const newTodo = {
@@ -63,6 +66,7 @@ app.post('/todos', (req, res) => {
   });
 });
 
+console.log('Registering route: PUT /todos/complete-all');
 // PUT /todos/complete-all - Mark all to-do items as completed
 app.put('/todos/complete-all', (req, res) => {
   console.log('PUT /todos/complete-all endpoint hit');
@@ -80,12 +84,14 @@ app.put('/todos/complete-all', (req, res) => {
   });
 });
 
+console.log('Registering route: PUT /test');
 // PUT /test - Test PUT endpoint to verify PUT method works
 app.put('/test', (req, res) => {
   console.log('PUT /test endpoint hit');
   res.json({ message: 'Test PUT request received' });
 });
 
+console.log('Registering route: DELETE /todos/:id');
 // DELETE /todos/:id - Delete a to-do item by ID
 app.delete('/todos/:id', (req, res) => {
   const id = req.params.id;
@@ -105,6 +111,7 @@ app.delete('/todos/:id', (req, res) => {
 });
 
 // Start the server
+console.log('Starting server...');
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
