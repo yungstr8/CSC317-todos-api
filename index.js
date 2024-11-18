@@ -38,6 +38,16 @@ app.post('/todos', (req, res) => {
     todos.push(newTodo);
     res.status(201).json(newTodo); // Return the newly created to-do
 });
+// PUT /todos/complete-all - Mark all tasks as completed
+app.put('/todos/complete-all', (req, res) => {
+    db.run('UPDATE todos SET completed = 1', [], function (err) {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.status(200).json({ message: 'All todos marked as completed' });
+    });
+});
 
 
 // Start the server
