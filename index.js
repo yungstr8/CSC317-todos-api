@@ -9,6 +9,12 @@ const port = 3000;
 // Middleware to parse JSON requests
 app.use(express.json());
 
+// Middleware to log all incoming requests
+app.use((req, res, next) => {
+  console.log(`Received ${req.method} request for ${req.url}`);
+  next();
+});
+
 // Connect to SQLite database
 const db = new sqlite3.Database('./todos.db', (err) => {
   if (err) {
@@ -60,6 +66,45 @@ app.post('/todos', (req, res) => {
 // PUT /todos/complete-all - Mark all to-do items as completed
 app.put('/todos/complete-all', (req, res) => {
   console.log('PUT /todos/complete-all endpoint hit');
+  
   const query = 'UPDATE todos SET completed = 1';
+  
+  db.run(query, function (err) {
+    if (err) {
+      console.error('Error running update query:', err.message);
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    console.log(`Successfully updated ${this.changes} rows`);
+    res.json({ message: 'All todos marked as completed' });
+  });
+});
 
-  db.run(query, funct
+// PUT /test - Test PUT endpoint to verify PUT method works
+app.put('/test', (req, res) => {
+  console.log('PUT /test endpoint hit');
+  res.json({ message: 'Test PUT request received' });
+});
+
+// DELETE /todos/:id - Delete a to-do item by ID
+app.delete('/todos/:id', (req, res) => {
+  const id = req.params.id;
+  const query = 'DELETE FROM todos WHERE id = ?';
+
+  db.run(query, id, function (err) {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    if (this.changes === 0) {
+      res.status(404).json({ error: 'To-do item not found' });
+      return;
+    }
+    res.status(200).json({ message: 'To-do item deleted successfully' });
+  });
+});
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`);
+});
