@@ -29,16 +29,16 @@ app.get('/todos', (req, res) => {
 
 // POST /todos - Add a new to-do item
 app.post('/todos', (req, res) => {
-    const { task, priority } = req.body;
-    const query = 'INSERT INTO todos (task, priority) VALUES (?, ?)';
-    db.run(query, [task, priority || 'medium'], function (err) {
-        if (err) {
-            res.status(500).json({ error: err.message });
-            return;
-        }
-        res.status(201).json({ id: this.lastID, task, priority: priority || 'medium', completed: 0 });
-    });
+    const newTodo = {
+        id: todos.length + 1,
+        task: req.body.task,
+        completed: false,
+        priority: req.body.priority || 'medium' // Default to 'medium' if not provided
+    };
+    todos.push(newTodo);
+    res.status(201).json(newTodo); // Return the newly created to-do
 });
+
 
 // Start the server
 app.listen(port, () => {
