@@ -1,3 +1,4 @@
+// Import required modules
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 
@@ -58,38 +59,7 @@ app.post('/todos', (req, res) => {
 
 // PUT /todos/complete-all - Mark all to-do items as completed
 app.put('/todos/complete-all', (req, res) => {
+  console.log('PUT /todos/complete-all endpoint hit');
   const query = 'UPDATE todos SET completed = 1';
 
-  db.run(query, function (err) {
-    if (err) {
-      console.error('Error running update query:', err.message);
-      res.status(500).json({ error: err.message });
-      return;
-    }
-    console.log(`Successfully updated ${this.changes} rows`);
-    res.json({ message: 'All todos marked as completed' });
-  });
-});
-
-// DELETE /todos/:id - Delete a to-do item by ID
-app.delete('/todos/:id', (req, res) => {
-  const id = req.params.id;
-  const query = 'DELETE FROM todos WHERE id = ?';
-
-  db.run(query, id, function (err) {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
-    if (this.changes === 0) {
-      res.status(404).json({ error: 'To-do item not found' });
-      return;
-    }
-    res.status(200).json({ message: 'To-do item deleted successfully' });
-  });
-});
-
-// Start the server
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
+  db.run(query, funct
