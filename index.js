@@ -20,6 +20,7 @@ const db = new sqlite3.Database('./todos.db', (err) => {
 app.get('/todos', (req, res) => {
     db.all('SELECT * FROM todos', [], (err, rows) => {
         if (err) {
+            console.error('Error retrieving todos:', err.message);
             res.status(500).json({ error: err.message });
             return;
         }
@@ -39,6 +40,7 @@ app.post('/todos', (req, res) => {
 
     db.run(query, params, function (err) {
         if (err) {
+            console.error('Error adding new todo:', err.message);
             res.status(500).json({ error: err.message });
             return;
         }
@@ -48,13 +50,18 @@ app.post('/todos', (req, res) => {
 
 // PUT /todos/complete-all - Mark all to-do items as completed
 app.put('/todos/complete-all', (req, res) => {
-    console.log('PUT /todos/complete-all endpoint hit');
+    console.log('PUT /todos/complete-all endpoint hit'); // Log for debugging
     const query = `UPDATE todos SET completed = 1`;
 
     db.run(query, function (err) {
         if (err) {
             console.error('Error running update query:', err.message);
             res.status(500).json({ error: err.message });
+            return;
+        }
+        if (this.changes === 0) {
+            console.log('No todos were updated.');
+            res.status(404).json({ message: 'No todos found to update.' });
             return;
         }
         console.log(`Successfully updated ${this.changes} rows`);
@@ -69,6 +76,7 @@ app.delete('/todos/:id', (req, res) => {
 
     db.run(query, id, function (err) {
         if (err) {
+            console.error('Error deleting todo:', err.message);
             res.status(500).json({ error: err.message });
             return;
         }
