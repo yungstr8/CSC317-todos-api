@@ -16,9 +16,19 @@ const db = new sqlite3.Database('./todos.db', (err) => {
     console.log('Connected to the SQLite database.');
 });
 
-// GET /todos - Retrieve all to-do items
+// GET /todos - Retrieve all to-do items, with optional filtering by completion status
 app.get('/todos', (req, res) => {
-    db.all('SELECT * FROM todos', [], (err, rows) => {
+    const { completed } = req.query;
+
+    let query = 'SELECT * FROM todos';
+    const params = [];
+
+    if (completed !== undefined) {
+        query += ' WHERE completed = ?';
+        params.push(completed === 'true' ? 1 : 0);
+    }
+
+    db.all(query, params, (err, rows) => {
         if (err) {
             res.status(500).json({ error: err.message });
             return;
@@ -29,10 +39,16 @@ app.get('/todos', (req, res) => {
 
 // POST /todos - Add a new to-do item
 app.post('/todos', (req, res) => {
+    const { task, priority = 'medium' } = req.body;
+
+    if (!['high', 'medium', 'low'].includes(priority)) {
+        return res.status(400).json({ error: 'Invalid priority value. Must be "high", "medium", or "low".' });
+    }
+
     const newTodo = {
-        task: req.body.task,
+        task,
         completed: 0,
-        priority: req.body.priority || 'medium', // Default to 'medium' if not provided
+        priority,
     };
     const query = `INSERT INTO todos (task, completed, priority) VALUES (?, ?, ?)`;
     const params = [newTodo.task, newTodo.completed, newTodo.priority];
