@@ -1,1 +1,1 @@
-
+This project API that lets you manage a to-do list. Built with Express.js and SQLite, it has endpoints for adding, viewing, updating, and deleting tasks, plus an option to mark all tasks as complete. 
