@@ -30,25 +30,33 @@ app.get('/todos', (req, res) => {
 // POST /todos - Add a new to-do item
 app.post('/todos', (req, res) => {
     const newTodo = {
-        id: todos.length + 1,
         task: req.body.task,
-        completed: false,
-        priority: req.body.priority || 'medium' // Default to 'medium' if not provided
+        completed: 0,
+        priority: req.body.priority || 'medium', // Default to 'medium' if not provided
     };
-    todos.push(newTodo);
-    res.status(201).json(newTodo); // Return the newly created to-do
-});
-// PUT /todos/complete-all - Mark all tasks as completed
-app.put('/todos/complete-all', (req, res) => {
-    db.run('UPDATE todos SET completed = 1', [], function (err) {
+    const query = `INSERT INTO todos (task, completed, priority) VALUES (?, ?, ?)`;
+    const params = [newTodo.task, newTodo.completed, newTodo.priority];
+
+    db.run(query, params, function (err) {
         if (err) {
             res.status(500).json({ error: err.message });
             return;
         }
-        res.status(200).json({ message: 'All todos marked as completed' });
+        res.status(201).json({ id: this.lastID, ...newTodo });
     });
 });
 
+// PUT /todos/complete-all - Mark all to-do items as completed
+app.put('/todos/complete-all', (req, res) => {
+    const query = `UPDATE todos SET completed = 1`;
+    db.run(query, function (err) {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json({ message: "All todos marked as completed" });
+    });
+});
 
 // Start the server
 app.listen(port, () => {
