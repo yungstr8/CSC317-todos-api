@@ -64,9 +64,11 @@ app.post('/todos', (req, res) => {
 
 // PUT /todos/complete-all - Mark all to-do items as completed
 app.put('/todos/complete-all', (req, res) => {
+    console.log('PUT /todos/complete-all endpoint hit');
     const query = `UPDATE todos SET completed = 1`;
     db.run(query, function (err) {
         if (err) {
+            console.error('Error running update query:', err.message);
             res.status(500).json({ error: err.message });
             return;
         }
@@ -78,4 +80,3 @@ app.put('/todos/complete-all', (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
-
